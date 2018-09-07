@@ -3,6 +3,8 @@
 #           2018 Beijing Shell Shell Tech. Co. Ltd. (Author: Hui BU)
 # Apache 2.0
 
+lm_dir=../recipes/resource_aishell
+
 . ./path.sh
 . ./utils/parse_options.sh
 
@@ -62,14 +64,14 @@ cat $cleantext | awk -v wmap=$dir/word_map 'BEGIN{while((getline<wmap)>0)map[$1]
 #echo "local/train_lms.sh succeeded"
 #exit 0
 mkdir -p data/local/lm/3gram-mincount/
-ngram-count -text ../recipes/resource_aishell/lexicon.txt -order 3 -write words.txt.count
-ngram-count -read ../recipes/resource_aishell/words.txt.count -order 3 -lm word.3gram.lm -interpolate
+ngram-count -text ${lm_dir}/lexicon.txt -order 3 -write ${lm_dir}/words.txt.count
+ngram-count -read ${lm_dir}/words.txt.count -order 3 -lm ${lm_dir}/word.3gram.lm -interpolate
 
- gzip -c ../recipes/resource_aishell/word.3gram.lm > data/local/lm/3gram-mincount/lm_unpruned.gz || exit 1;
+ gzip -c ${lm_dir}/word.3gram.lm > data/local/lm/3gram-mincount/lm_unpruned.gz || exit 1;
 
 # From here is some commands to do a baseline with SRILM (assuming
 # you have it installed).
-<<EOF
+:<<COMMENT_OUT
 heldout_sent=10000 # Don't change this if you want result to be comparable with
     # kaldi_lm results
 sdir=$dir/srilm # in case we want to use SRILM to double-check perplexities.
@@ -91,6 +93,6 @@ ngram -lm $sdir/srilm.o3g.kn.gz -ppl $sdir/heldout
 # Difference in WSJ must have been due to different treatment of <UNK>.
 ngram -lm $dir/3gram-mincount/lm_unpruned.gz  -ppl $sdir/heldout
 # 0 zeroprobs, logprob= -250913 ppl= 90.4439 ppl1= 132.379
-EOF
+COMMENT_OUT
 echo "local/train_lms.sh succeeded"
 exit 0

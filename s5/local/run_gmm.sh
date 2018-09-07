@@ -55,7 +55,7 @@ if [ $stage -le 2 ]; then
     data/train data/lang exp/mono exp/mono_ali || exit 1;
 fi 
 
-<< EOF
+:<<COMMENT_OUT
 # tri1
 if [ $stage -le 3 ]; then
   # training
@@ -112,7 +112,7 @@ if [ $stage -le 5 ]; then
   steps/align_si.sh --cmd "$train_cmd" --nj ${nj} \
     data/dev data/lang exp/tri3 exp/tri3_ali_dev || exit 1;
 fi
-EOF
+COMMENT_OUT
 echo "local/run_gmm.sh succeeded"
 exit 0;
 

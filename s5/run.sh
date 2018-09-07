@@ -37,12 +37,12 @@ if [ $stage -le 2 ]; then
 fi
 
 
-<<EOF
+:<<COMMENT_OUT
 # chain
 if [ $stage -le 3 ]; then
   local/chain/run_tdnn.sh --nj $nj
 fi
-EOF
+COMMENT_OUT
 local/show_results.sh
 
 exit 0;
