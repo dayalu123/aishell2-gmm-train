@@ -14,11 +14,11 @@
 # trn_set=/disk10/data/AISHELL-2/iOS/data
 # dev_set=/disk10/data/AISHELL-2/iOS/dev
 # tst_set=/disk10/data/AISHELL-2/iOS/test
-trn_set=
-dev_set=
-tst_set=
+trn_set=../recipes/data_aishell/wav/train
+dev_set=../recipes/data_aishell/wav/dev
+tst_set=../recipes/data_aishell/wav/test
 
-nj=20
+nj=2
 stage=1
 gmm_stage=1
 
@@ -36,11 +36,13 @@ if [ $stage -le 2 ]; then
   local/run_gmm.sh --nj $nj --stage $gmm_stage
 fi
 
+
+<<EOF
 # chain
 if [ $stage -le 3 ]; then
   local/chain/run_tdnn.sh --nj $nj
 fi
-
+EOF
 local/show_results.sh
 
 exit 0;

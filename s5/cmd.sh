@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # you can change cmd.sh depending on what type of queue you are using.
 # If you have no queueing system and want to run on a local machine, you
 # can change all instances 'queue.pl' to run.pl (but be careful and run
@@ -10,6 +11,10 @@
 # conf/queue.conf in http://kaldi-asr.org/doc/queue.html for more information,
 # or search for the string 'default_config' in utils/queue.pl or utils/slurm.pl.
 
-export train_cmd="queue.pl --mem 2G"
-export decode_cmd="queue.pl --mem 4G"
-export mkgraph_cmd="queue.pl --mem 8G"
+#export train_cmd="queue.pl --mem 2G"
+#export decode_cmd="queue.pl --mem 4G"
+#export mkgraph_cmd="queue.pl --mem 8G"
+
+export train_cmd="run.pl --mem 2G"
+export decode_cmd="run.pl --mem 4G"
+export mkgraph_cmd="run.pl --mem 8G"

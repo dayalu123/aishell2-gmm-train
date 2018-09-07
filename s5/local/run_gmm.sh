@@ -7,7 +7,7 @@
 set -e
 
 # number of jobs
-nj=20
+nj=2
 stage=1
 
 . ./cmd.sh
@@ -23,23 +23,25 @@ if [ $stage -le 1 ]; then
   # mfccdir should be some place with a largish disk where you
   # want to store MFCC features.
   for x in train dev test; do
-    steps/make_mfcc_pitch.sh --pitch-config conf/pitch.conf --cmd "$train_cmd" --nj $nj \
+#    steps/make_mfcc_pitch.sh --pitch-config conf/pitch.conf --cmd "$train_cmd" --nj $nj \
+#      data/$x exp/make_mfcc/$x mfcc || exit 1;
+    steps/make_mfcc.sh --cmd "$train_cmd" --nj $nj \
       data/$x exp/make_mfcc/$x mfcc || exit 1;
     steps/compute_cmvn_stats.sh data/$x exp/make_mfcc/$x mfcc || exit 1;
     utils/fix_data_dir.sh data/$x || exit 1;
   done
   
   # subset the training data for fast startup
-  for x in 100 300; do
-    utils/subset_data_dir.sh data/train ${x}000 data/train_${x}k
-  done
+  #for x in 100 300; do
+    #utils/subset_data_dir.sh data/train ${x}000 data/train_${x}k
+  #done
 fi
 
 # mono
 if [ $stage -le 2 ]; then
   # training
   steps/train_mono.sh --cmd "$train_cmd" --nj $nj \
-    data/train_100k data/lang exp/mono || exit 1;
+    data/train data/lang exp/mono || exit 1;
 
   # decoding
   utils/mkgraph.sh data/lang_test exp/mono exp/mono/graph || exit 1;
@@ -50,9 +52,10 @@ if [ $stage -le 2 ]; then
   
   # alignment
   steps/align_si.sh --cmd "$train_cmd" --nj $nj \
-    data/train_300k data/lang exp/mono exp/mono_ali || exit 1;
+    data/train data/lang exp/mono exp/mono_ali || exit 1;
 fi 
 
+<< EOF
 # tri1
 if [ $stage -le 3 ]; then
   # training
@@ -109,7 +112,7 @@ if [ $stage -le 5 ]; then
   steps/align_si.sh --cmd "$train_cmd" --nj ${nj} \
     data/dev data/lang exp/tri3 exp/tri3_ali_dev || exit 1;
 fi
-
+EOF
 echo "local/run_gmm.sh succeeded"
 exit 0;
 

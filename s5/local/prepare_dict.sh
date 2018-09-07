@@ -7,7 +7,7 @@
 
 . ./path.sh
 
-download_dir=data/local/DaCiDian
+#download_dir=data/local/DaCiDian
 dir=data/local/dict
 
 if [ $# -ne 1 ]; then 
@@ -18,11 +18,12 @@ fi
 dir=$1
 
 # download the DaCiDian from github
-git clone https://github.com/aishell-foundation/DaCiDian.git $download_dir
+#git clone https://github.com/aishell-foundation/DaCiDian.git $download_dir
 
 # here we map <UNK> to the phone spn(spoken noise)
 mkdir -p $dir
-python $download_dir/DaCiDian.py $download_dir/word_to_pinyin.txt $download_dir/pinyin_to_phone.txt > $dir/lexicon.txt
+cp ../recipes/resource_aishell/lexicon.txt $dir/
+#python $download_dir/DaCiDian.py $download_dir/word_to_pinyin.txt $download_dir/pinyin_to_phone.txt > $dir/lexicon.txt
 echo -e "<UNK>\tspn" >> $dir/lexicon.txt
 
 # prepare silence_phones.txt, nonsilence_phones.txt, optional_silence.txt, extra_questions.txt

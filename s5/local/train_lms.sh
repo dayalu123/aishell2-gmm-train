@@ -54,17 +54,22 @@ cat $cleantext | awk -v wmap=$dir/word_map 'BEGIN{while((getline<wmap)>0)map[$1]
   { for(n=2;n<=NF;n++) { printf map[$n]; if(n<NF){ printf " "; } else { print ""; }}}' | gzip -c >$dir/train.gz \
    || exit 1;
 
-train_lm.sh --arpa --lmtype 3gram-mincount $dir || exit 1;
+#train_lm.sh --arpa --lmtype 3gram-mincount $dir || exit 1;
 
 # note: output is
 # data/local/lm/3gram-mincount/lm_unpruned.gz
 
-echo "local/train_lms.sh succeeded"
-exit 0
+#echo "local/train_lms.sh succeeded"
+#exit 0
+mkdir -p data/local/lm/3gram-mincount/
+ngram-count -text ../recipes/resource_aishell/lexicon.txt -order 3 -write words.txt.count
+ngram-count -read ../recipes/resource_aishell/words.txt.count -order 3 -lm word.3gram.lm -interpolate
 
+ gzip -c ../recipes/resource_aishell/word.3gram.lm > data/local/lm/3gram-mincount/lm_unpruned.gz || exit 1;
 
 # From here is some commands to do a baseline with SRILM (assuming
 # you have it installed).
+<<EOF
 heldout_sent=10000 # Don't change this if you want result to be comparable with
     # kaldi_lm results
 sdir=$dir/srilm # in case we want to use SRILM to double-check perplexities.
@@ -86,6 +91,6 @@ ngram -lm $sdir/srilm.o3g.kn.gz -ppl $sdir/heldout
 # Difference in WSJ must have been due to different treatment of <UNK>.
 ngram -lm $dir/3gram-mincount/lm_unpruned.gz  -ppl $sdir/heldout
 # 0 zeroprobs, logprob= -250913 ppl= 90.4439 ppl1= 132.379
-
+EOF
 echo "local/train_lms.sh succeeded"
 exit 0
